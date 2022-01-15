@@ -39,12 +39,12 @@
 
                             <div class="field">
                                 <label>Invoice Number</label>
-                                <input type="text" name="description" id="description" placeholder="Invoice Number">
+                                <input type="text" name="invoiceNumberSearch" id="invoiceNumberSearch" placeholder="Invoice Number">
                             {% csrf_token %}
                             </div>
 
                             <div class="field" style="padding-top: 1.666em;">
-                                <button type="button" class="ui fluid green button" onclick="addExpense()">
+                                <button type="button" class="ui fluid green button" onclick="GetSaleDetail()">
                                     <i class="icon search"></i>
                                     Search Invoice
                                 </button>
@@ -56,12 +56,14 @@
                 </div>
 
                 </div>
+
+<div id="showDiv" style="display: none;">
 <div class="ui basic segment">
 <h5 class="ui horizontal left aligned divider header">
                         <i class="left align icon"></i>
                         Invoice Detail
                     </h5>
-     <div class="content" >
+     <div class="content placeholder " style="height: 7rem;overflow-y: scroll;background-color: lightgrey">
             <div class="description">
 
 
@@ -69,7 +71,7 @@
                         <a class="item active" data-tab="first">Basic Details</a>
                         <a class="item" data-tab="second">Addition Details</a>
                     </div>
-                    <div class="ui tab segment active" data-tab="first">
+                    <div class="ui tab segment active" data-tab="first" style="background-color: lightgrey">
                         <div class="ui internally grid">
                             <div class="row" style="padding-top: 1.5rem;padding-bottom: 1.5rem;" >
                                 <div class="three wide column" style="text-align: left;">
@@ -125,18 +127,19 @@
 
                                 <div class="two wide column" style="text-align: left;">
                                     <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="amazon pay icon"></i>
-                                            <div class="content">
-                                                <a class="header">Payment Type:</a>
-                                                <div class="description" id="sPaymentType">N/A</div>
-                                            </div>
-                                        </div>
+
                                         <div class="item" style="padding-bottom: 0;">
                                             <i class="scroll icon"></i>
                                             <div class="content">
                                                 <a class="header"> Invoice No:</a>
                                                 <div class="description" id="sInvoice">N/A</div>
+                                            </div>
+                                        </div>
+                                         <div class="item" style="padding-bottom: 0;">
+                                            <i class="amazon pay icon"></i>
+                                            <div class="content">
+                                                <a class="header">Payment Type:</a>
+                                                <div class="description" id="sPaymentType">N/A</div>
                                             </div>
                                         </div>
                                         <div class="item" style="padding-bottom: 0;">
@@ -232,7 +235,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ui  tab segment" data-tab="second">
+                    <div class="ui  tab segment" data-tab="second" style="background-color: lightgrey">
                         <div class="ui internally grid">
                             <div class="row" style="padding-top: 1.5rem;padding-bottom: 1.5rem;" >
                                 <div class="four wide column" style="text-align: left;">
@@ -344,307 +347,138 @@
                         <i class="left align icon"></i>
                         Product List
                     </h5>
-<table class="ui compact celled definition table">
+<table id="itemTableReport" class="ui very compact celled definition table">
   <thead class="full-width">
     <tr>
-      <th></th>
-      <th>Name</th>
-      <th>Registration Date</th>
-      <th>E-mail address</th>
-      <th>Premium Plan</th>
+      <th>SlNo.</th>
+      <th>Product Name</th>
+      <th>Category</th>
+      <th>HSN</th>
+
+      <th>Quantity</th>
+      <th>Unit</th>
+              <th>Rate(₹)</th>
+              <th>GST%</th>
+              <th>Disc%</th>
+              <th>Rate(₹)</th>
+      <th>Return Qty</th>
+      <th>Return Amt.(₹)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td class="collapsing">
-        <div class="ui fitted slider checkbox">
-          <input type="checkbox"> <label></label>
-        </div>
+        #
       </td>
-      <td>John Lilki</td>
-      <td>September 14, 2013</td>
-      <td>jhlilk22@yahoo.com</td>
+      <td>Rice</td>
+      <td>145</td>
+      <td>5</td>
+      <td>Kg</td>
+      <td><div class="ui mini  input">
+  <input type="text" placeholder="Return Quantity">
+</div></td>
       <td>No</td>
-    </tr>
-    <tr>
-      <td class="collapsing">
-        <div class="ui fitted slider checkbox">
-          <input type="checkbox"> <label></label>
-        </div>
-      </td>
-      <td>Jamie Harington</td>
-      <td>January 11, 2014</td>
-      <td>jamieharingonton@yahoo.com</td>
-      <td>Yes</td>
-    </tr>
-    <tr>
-      <td class="collapsing">
-        <div class="ui fitted slider checkbox">
-          <input type="checkbox"> <label></label>
-        </div>
-      </td>
-      <td>Jill Lewis</td>
-      <td>May 11, 2014</td>
-      <td>jilsewris22@yahoo.com</td>
-      <td>Yes</td>
     </tr>
   </tbody>
   <tfoot class="full-width">
     <tr>
       <th></th>
-      <th colspan="4">
+      <th colspan="6">
+           <div class="ui floated small green labeled icon button">
+          <i class="rupee sign icon"></i> Total Return Amount (₹) : <span id="returnAmount">0.00</span>
+        </div>
         <div class="ui right floated small primary labeled icon button">
-          <i class="user icon"></i> Add User
+          <i class="check icon"></i> Make Return
         </div>
-        <div class="ui small  button">
-          Approve
-        </div>
-        <div class="ui small  disabled button">
-          Approve All
-        </div>
+
       </th>
     </tr>
   </tfoot>
 </table>
 </div>
-
-        <div class="ui basic modal custom" id="delHSNModal">
-        <div class="ui icon header">
-            <i class="archive icon"></i>
-            Expense detail will be Deleted.
-        </div>
-        <div class="content">
-            <p style="text-align: center">The Expense detail will be deleted, are you sure to delete
-                this Expense?</p>
-        </div>
-        <div class="actions">
-            <div class="ui red basic cancel inverted button">
-                <i class="remove icon"></i>
-                No
-            </div>
-            <input type="hidden" id="dHSNID">
-            <div class="ui green ok inverted button" onclick="deleteHSN()">
-                <i class="checkmark icon"></i>
-                Yes
-            </div>
-        </div>
-    </div>
-
+</div>
 {% endblock %}
 
 
 {% block js %}
     <script>
      $('.menu .item').tab();
-        let today = new Date();
-        $('#standard_calendar')
-            .calendar({
-                initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-                monthFirst: false,
-                type: 'date',
-                formatter: {
-                        date: function (date, settings) {
-                            if (!date) return '';
-                            var day = date.getDate();
-                            var month = date.getMonth() + 1;
-                            var year = date.getFullYear();
-                            return day + '/' + month + '/' + year;
-                        }
-                    }
-                }
-            );
-     $('#rangestart').calendar({
-            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-         monthFirst: false,
-         type: 'date',
-            endCalendar: $('#rangeend'),
-            formatter: {
-                date: function (date, settings) {
-                    if (!date) return '';
-                    var day = date.getDate();
-                    var month = date.getMonth() + 1;
-                    var year = date.getFullYear();
-                    return day + '/' + month + '/' + year;
-                }
-            }
-        });
-        $('#rangeend').calendar({
-            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-            monthFirst: false,
-            type: 'date',
-            startCalendar: $('#rangestart'),
-            formatter: {
-                date: function (date, settings) {
-                    if (!date) return '';
-                    var day = date.getDate();
-                    var month = date.getMonth() + 1;
-                    var year = date.getFullYear();
-                    return day + '/' + month + '/' + year;
-                }
-            }
-        });
-
-     function addExpense() {
-            var description = $('#description').val();
-            var amount = $('#amount').val();
-            var date = $('#date').val();
-            var expenseType = $('#expenseType').val();
-            var company = $('#company').val();
-            if (description === '' || amount === ''|| date === ''|| expenseType === '') {
-                $('body')
-                    .toast({
-                        class: 'orange',
-                        message: 'All fields are required !'
-                    })
-                ;
-            }
-            else {
-
-                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
-
-                data = new FormData();
-                data.append('description', description);
-                data.append('amount', amount);
-                data.append('date', date);
-                data.append('expenseType', expenseType);
-                data.append('company', company);
-
-                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
-
-                $.ajax({
-                    type: 'post',
-                    url: '{% url 'homeApp:add_expense' %}',
-                    data: data,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-
-
-                    success: function (response) {
-                        if (response.message === 'success') {
-                            $('body')
-                                .toast({
-                                    class: 'success',
-                                    message: 'Expense Added Successfully.'
-                                })
-                            ;
-
-                            expenseTab.ajax.reload();
-                            $('#expenseForm').trigger('reset')
-                        }
-                        else {
-                            $('body')
-                                .toast({
-                                    class: 'error',
-                                    message: 'An error occurred !'
-                                })
-                            ;
-
-                        }
-
-                        return response;
-                    },
-                    error: function () {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
-                    }
-                });
-
-
-            }
-
-        }
-
-        $(getExpense());
-        var expenseTab;
-        function getExpense() {
-                  var startDate = $('#startDateF').val();
-            var endDate = $('#endDateF').val();
-
-             expenseTab = $('#expenseTable').DataTable({
-                dom: 'Blfrtip',
-                "scrollY":"215px",
-                buttons: [{
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: [0, 1, 2,3,4]
-                    }},{
-                    extend: 'print',
-                    exportOptions: {
-                        columns: [0, 1, 2,3,4]
-                    }}
-                ],
-                "columnDefs": [
-                    {"name": "expenseType", "targets": 0, "orderable": true},
-                    {"name": "description", "targets": 1, "orderable": true},
-                    {"name": "amount", "targets": 2, "orderable": true},
-                    {"name": "companyID", "targets": 3, "orderable": true},
-                    {"name": "expenseDate", "targets":4, "orderable": true},
-                    {"name": "datetime", "targets":5, "orderable": true},
-                    {"name": "action", "targets":6, "orderable": true},
-
-                ],
-                aaSorting: [[4, 'desc']],
-                "lengthMenu": [[6, 25, 50, 100, -1], [6, 25, 50, 100, "All"]],
-                "pageLength": 6,
-                "processing": true,
-                "serverSide": true,
-                "ajax": '{% url 'homeApp:ExpenseListJson' %}?startDate=' + startDate + '&endDate=' + endDate
-            });
-        }
-  function filterDetails() {
-                      var startDate = $('#startDateF').val();
-                    var endDate = $('#endDateF').val();
-                    expenseTab.ajax.url( '{% url 'homeApp:ExpenseListJson' %}?startDate=' + startDate + '&endDate=' + endDate ).load();
-
-                }
-                      function delExpense(id) {
-            $('#delHSNModal')
-                .modal('show')
-            ;
-            $('#dHSNID').val(id)
-        }
-
-        function deleteHSN() {
-            var id = $('#dHSNID').val();
-            var formdata = new FormData();
-            formdata.append('ID', id);
+  function GetSaleDetail() {
+            var invoice = $('#invoiceNumberSearch').val();
+            if(invoice!==''){
             $.ajax({
-                url: "{% url 'homeApp:delete_expense' %}",
-                type: "post",
-                data: formdata,
-                contentType: false,
-                cache: false,
-                processData: false,
+                type: 'get',
+                url: '/api/get_sales_detail_by_invoice_number/?invoice='+invoice ,
 
                 success: function (response) {
-                    if (response.message === 'success') {
-                        $('body')
-                            .toast({
-                                class: 'success',
-                                message: 'Expense Detail Deleted Successfully.'
-                            })
-                        ;
 
+                    if(response.message == 'success'){
+                        $('#showDiv').css('display','block');
+                                   $('body')
+                        .toast({
+                            class: 'success',
+                            message: 'Invoice details found!'
+                        })
+                    ;
+                               $('#itemTableReport tbody tr').remove();
+                    $('#CustName').html(response.data.Basic['Name']);
+                    $('#custGst').html(response.data.Basic['Gst']);
+                    $('#custPhone').html(response.data.Basic['Phone']);
+                    $('#custEmail').html(response.data.Basic['Email']);
+                    $('#custAddress').html(response.data.Basic['Address']);
+                    $('#custState').html(response.data.Basic['State']);
+                    $('#sPaymentType').html(response.data.Basic['PaymentType']);
+                    $('#sInvoice').html(response.data.Basic['Invoice']);
+                    $('#sInvoiceDate').html(response.data.Basic['InvoiceDate']);
+                    $('#sTaxable').html(response.data.Basic['Taxable']);
+                    $('#sSubTotal').html(response.data.Basic['SubTotal']);
+                    $('#sDiscount').html(response.data.Basic['Discount']);
+                    $('#sGrandTotal').html(response.data.Basic['GrandTotal']);
+                    $('#sRoundOff').html(response.data.Basic['RoundOff']);
+                    $('#sTotalFinal').html(response.data.Basic['TotalFinal']);
+                    $('#sBillGst').html(response.data.Basic['BillGst']);
+                    $('#CreditDays').html(response.data.Basic['CreditDays']);
+                    $('#chequeDetail').html(response.data.Basic['chequeDetail']);
+                    $('#deliveryNote').html(response.data.Basic['deliveryNote']);
+                    $('#SupplierReference').html(response.data.Basic['SupplierReference']);
+                    $('#BuyersOrderNumber').html(response.data.Basic['BuyersOrderNumber']);
+                    $('#DispatchDocumentNumber').html(response.data.Basic['DispatchDocumentNumber']);
+                    $('#DispatchThrough').html(response.data.Basic['DispatchThrough']);
+                    $('#OtherReference').html(response.data.Basic['OtherReference']);
+                    $('#DispatchNoteDate').html(response.data.Basic['DispatchNoteDate']);
+                    $('#Destination').html(response.data.Basic['Destination']);
+                    $('#sOtherCharges').html(response.data.Basic['OtherCharges']);
+                    $('#PaidAmount').html(response.data.Basic['PaidAmount']);
+                    $('#DueOrReturnAmount').html(response.data.Basic['DueOrReturnAmount']);
+                    $('#PaidAgainstBill').html(response.data.Basic['PaidAgainstBill']);
+                    $('#AddedBy').html(response.data.Basic['AddedBy']);
+                    $('#sPersonalDiscount').html(response.data.Basic['PersonalDiscount']);
+                    $('#billDetail').html("(#"+response.data.Basic['BillNumber']+"-"+response.data.Basic['BillType']+")" );
 
-                        expenseTab.ajax.reload();
-                    } else {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
+                    var i;
+                    for (i = 0; i < response.data.Items.length; i++) {
+                        $('#itemTableReport tbody').append('<tr id ="' + response.data.Items[i]['ItemID'] + '" ><td id ="row' + response.data.Items[i]['ItemID'] + '">#</td> <td id ="product' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemProductName'] + '</td><td id ="category' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemCategory'] + '</td><td id ="hsn' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemHsn'] + '</td><td id ="quantity' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemQuantity'] + '</td><td id ="unit' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemUnit'] + '</td><td id ="price' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemRate'] + '</td><td id ="gst' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemGst'] + '</td><td id ="disc' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemDisc'] + '</td><td id ="netprice' + response.data.Items[i]['ItemnetRate'] + '">' + response.data.Items[i]['ItemnetRate'] + '</td></tr>');
 
                     }
+                    }
+                    else{
+  $('#showDiv').css('display','none');
+                            $('body')
+                        .toast({
+                            class: 'orange',
+                            message: 'No Invoice detail found! Please try again.'
+                        })
+                    ;
+                    }
 
-                    return response;
+
+
+
+
                 },
+
                 error: function () {
+                      $('#showDiv').css('display','none');
                     $('body')
                         .toast({
                             class: 'error',
@@ -654,8 +488,17 @@
                 }
             });
 
-        }
 
+        } else {
+                  $('#showDiv').css('display','none');
+                           $('body')
+                        .toast({
+                            class: 'orange',
+                            message: 'Invoice number required !'
+                        })
+                    ;
+            }
+        }
 
 
     </script>

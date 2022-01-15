@@ -130,6 +130,7 @@ urlpatterns = [
     url(r'^SalesListByCustomerJson/$', SalesListByCustomerJson.as_view(), name='SalesListByCustomerJson'),
     url(r'^api/AddNewSalesDetail/$', add_sales, name='add_sales'),
     url(r'^api/get_sales_detail/(?P<id>[0-9]+)/$', get_sales_detail, name='get_sales_detail'),
+    url(r'^api/get_sales_detail_by_invoice_number/$', get_sales_detail_by_invoice_number, name='get_sales_detail_by_invoice_number'),
     url(r'^api/get_sales_detail_for_invoice/(?P<id>[0-9]+)/$', get_sales_detail_for_invoice,
         name='get_sales_detail_for_invoice'),
     url(r'^api/delete_sales/$', delete_sales, name='delete_sales'),

@@ -2302,6 +2302,76 @@ def get_sales_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+def get_sales_detail_by_invoice_number(request):
+    try:
+        invoiceNumber = request.GET['invoice']
+        instance = Sales.objects.get(invoiceNumber=invoiceNumber)
+        basic = {
+            'Name': instance.customerName,
+            'Gst': instance.customerGst,
+            'Phone': instance.customerPhone,
+            'Address': instance.customerAddress,
+            'Email': instance.customerEmail,
+            'State': instance.customerState,
+            'PaymentType': instance.paymentType,
+            'Invoice': instance.invoiceNumber,
+            'InvoiceDate': instance.invoiceDate,
+            'Taxable': instance.taxable,
+            'SubTotal': instance.subTotal,
+            'Discount': instance.billDisc,
+            'GrandTotal': instance.grandTotal,
+            'RoundOff': instance.roundOff,
+            'TotalFinal': instance.totalFinal,
+            'BillGst': instance.gst,
+            'CreditDays': instance.creditDays,
+            'chequeDetail': instance.chequeDetail,
+            'deliveryNote': instance.deliveryNote,
+            'SupplierReference': instance.supplierReference,
+            'BuyersOrderNumber': instance.buyersOrderNumber,
+            'DispatchDocumentNumber': instance.dispatchDocumentNumber,
+            'DispatchThrough': instance.dispatchThrough,
+            'OtherReference': instance.otherReference,
+            'DispatchNoteDate': instance.dispatchNoteDate,
+            'Destination': instance.destination,
+            'OtherCharges': instance.otherCharges,
+            'PaidAmount': instance.paidAmount,
+            'DueOrReturnAmount': instance.dueOrReturnAmount,
+            'PaidAgainstBill': instance.paidAgainstBill,
+            'AddedBy': instance.addedBy.username,
+            'PersonalDiscount': instance.personalDiscount,
+            'BillNumber': str(instance.pk).zfill(5),
+            'BillType': instance.salesType,
+        }
+        items = SalesProduct.objects.filter(salesID_id=instance.pk)
+        item_list = []
+        for i in items:
+            item_dic = {
+                'ItemID': i.pk,
+                'ItemProductName': i.productName,
+                'ItemCategory': i.category,
+                'ItemHsn': i.hsn,
+                'ItemQuantity': i.quantity,
+                'ItemUnit': i.unit,
+                'ItemRate': i.netRate,
+                'ItemGst': i.gst,
+                'ItemDisc': i.disc,
+                'ItemnetRate': i.netRate,
+                'ItemTotal': i.total,
+
+            }
+            item_list.append(item_dic)
+
+        data = {
+            'Basic': basic,
+            'Items': item_list
+
+        }
+        return JsonResponse({'data': data, 'message':'success'}, safe=False)
+    except:
+        return JsonResponse({'message':'error'}, safe=False)
+
+
+
 def get_sales_detail_for_invoice(request, id=None):
     instance = get_object_or_404(Sales, pk=id)
     basic = {
