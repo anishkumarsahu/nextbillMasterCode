@@ -253,6 +253,14 @@ def hsn_and_category(request):
 
 
 @is_activated()
+def create_return(request):
+    if request.user.is_authenticated:
+        return render(request, 'home/return.html')
+    else:
+        return redirect('homeApp:loginPage')
+
+
+@is_activated()
 def salesReport(request):
     return render(request, 'home/salesReport.html')
 

@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^purchase/$', puchase, name='puchase'),
     url(r'^product/$', product, name='product'),
     url(r'^hsnCategory/$', hsn_and_category, name='hsn'),
+    url(r'^create_return/$', create_return, name='create_return'),
     url(r'^salesReport/$', salesReport, name='salesReport'),
     url(r'^bookingList/$', bookingList, name='bookingList'),
     url(r'^purchaseReport/$', purchaseReport, name='purchaseReport'),

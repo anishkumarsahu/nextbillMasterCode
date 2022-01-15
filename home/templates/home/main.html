@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <title>Home</title>
     {% progressive_web_app_meta %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=no">
     <link rel="icon" href="{% static 'logo/logo.png' %}" type="image/gif" sizes="16x16">
     <script src="{% static 'jsMain/jquery.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">
@@ -41,7 +41,7 @@
         </div>
 
     </div>
-    <div class="five column row">
+    <div class="seven column row">
 
         <div class="column">
             <a href="{% url 'homeApp:sales' %}">
@@ -52,11 +52,20 @@
             <a href="{% url 'homeApp:bookingList' %}">
                 <p><i class="box icon" style="font-size: 5rem;"></i><br>BOOKINGS </p>
             </a>
+        </div><div class="column">
+            <a href="{% url 'homeApp:create_return' %}">
+                <p><i class="undo icon" style="font-size: 5rem;"></i><br>RETURN </p>
+            </a>
         </div>
 
         <div class="column">
             <a href="{% url 'homeApp:salesReport' %}">
                 <p><i class="chart line icon" style="font-size: 5rem;"></i><br>SALES REPORT </p>
+            </a>
+        </div>
+        <div class="column">
+            <a href="{% url 'homeApp:salesReport' %}">
+                <p><i class="tasks icon" style="font-size: 5rem;"></i><br>RETURN REPORT </p>
             </a>
         </div>
 
