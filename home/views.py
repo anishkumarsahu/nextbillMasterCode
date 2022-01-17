@@ -266,6 +266,11 @@ def salesReport(request):
 
 
 @is_activated()
+def returnReport(request):
+    return render(request, 'home/returnReport.html')
+
+
+@is_activated()
 def bookingList(request):
     return render(request, 'home/bookingList.html')
 
@@ -2307,6 +2312,7 @@ def get_sales_detail_by_invoice_number(request):
         invoiceNumber = request.GET['invoice']
         instance = Sales.objects.get(invoiceNumber=invoiceNumber)
         basic = {
+            'SalesID': instance.pk,
             'Name': instance.customerName,
             'Gst': instance.customerGst,
             'Phone': instance.customerPhone,
@@ -2356,7 +2362,7 @@ def get_sales_detail_by_invoice_number(request):
                 'ItemGst': i.gst,
                 'ItemDisc': i.disc,
                 'ItemnetRate': i.netRate,
-                'ItemTotal': i.total,
+                'ItemRateAfterDiscount': round((i.total / i.quantity),2) + round((round((i.total / i.quantity),2) * i.gst/100.0),2),
 
             }
             item_list.append(item_dic)
@@ -5204,3 +5210,42 @@ def download_product_sales_report(request):
     workbook.close()
     # response.write(workbook)
     return response
+
+
+@csrf_exempt
+def add_return_sales(request):
+    if request.method == 'POST':
+
+        salesID = request.POST.get("salesID")
+        returnAmount = request.POST.get("returnAmount")
+        datas = request.POST.get("datas")
+        sale = SalesReturn()
+        sale.salesID_id = int(salesID)
+        sale.totalAmount = float(returnAmount)
+        sale.addedBy_id = request.user.pk
+        sale.save()
+
+        splited_receive_item = datas.split("@")
+        for item in splited_receive_item[:-1]:
+            item_details = item.split('|')
+            p = SalesReturnProduct()
+            p.salesReturnID_id = sale.pk
+            p.productID_id = int(item_details[0])
+            p.rate = float(item_details[1])
+            p.quantity = float(item_details[2])
+            p.total = float(item_details[3])
+            p.save()
+            pro = Product.objects.get(pk=p.productID.productID.pk)
+            ori_stock = pro.stock
+            pro.stock = (ori_stock + p.quantity)
+            pro.save()
+
+            try:
+                bat = ProductBatch.objects.filter(pk=p.productID.batchID.pk).first()
+                ori_batch_stock = bat.quantity
+                bat.quantity = (ori_batch_stock + p.quantity)
+                bat.save()
+            except:
+                pass
+
+        return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
