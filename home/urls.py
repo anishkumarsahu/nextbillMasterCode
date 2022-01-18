@@ -133,10 +133,12 @@ urlpatterns = [
     url(r'^api/AddNewSalesDetail/$', add_sales, name='add_sales'),
     url(r'^api/add_return_sales/$', add_return_sales, name='add_return_sales'),
     url(r'^api/get_sales_detail/(?P<id>[0-9]+)/$', get_sales_detail, name='get_sales_detail'),
+    url(r'^api/get_return_detail/(?P<id>[0-9]+)/$', get_return_detail, name='get_return_detail'),
     url(r'^api/get_sales_detail_by_invoice_number/$', get_sales_detail_by_invoice_number, name='get_sales_detail_by_invoice_number'),
     url(r'^api/get_sales_detail_for_invoice/(?P<id>[0-9]+)/$', get_sales_detail_for_invoice,
         name='get_sales_detail_for_invoice'),
     url(r'^api/delete_sales/$', delete_sales, name='delete_sales'),
+    url(r'^api/delete_return/$', delete_return, name='delete_return'),
     url(r'^api/take_sale_payment/$', take_sale_payment, name='take_sale_payment'),
 
     # Purchase

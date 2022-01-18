@@ -2224,7 +2224,7 @@ class ReturnListJson(BaseDatatableView):
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
 
                 action = '''<button style="font-size:10px;" onclick = "TakePayment('{}')" class="ui circular  icon button blue">
-                               <i class="hand holding usd icon"></i>
+                               <i class="undo icon"></i>
                              </button><button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
                                <i class="receipt icon"></i>
                              </button>
@@ -2233,17 +2233,17 @@ class ReturnListJson(BaseDatatableView):
 
                              <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
                                <i class="trash alternate icon"></i>
-                             </button>'''.format(item.pk, item.pk, item.pk),
+                             </button>'''.format(item.pk, item.salesID.pk, item.pk),
             else:
                 action = '''<button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
                                                <i class="receipt icon"></i>
-                                             </button>'''.format(item.pk, item.pk, item.pk),
+                                             </button>'''.format(item.salesID.pk),
 
             json_data.append([
                 escape(item.salesID.customerName),  # escape HTML for security reasons
                 customerGst,
                 escape(item.salesID.invoiceDate),
-                str(item.pk).zfill(5),
+                str(item.salesID.pk).zfill(5),
                 invoiceNumber,
                 escape(item.totalAmount),
                 escape(item.salesID.companyID.name),
@@ -2567,6 +2567,30 @@ def get_sales_detail_for_invoice(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+def get_return_detail(request, id=None):
+    instance = get_object_or_404(SalesReturn, pk=id)
+    items = SalesReturnProduct.objects.filter(salesReturnID_id=instance.pk, quantity__gt=0)
+    item_list = []
+    for i in items:
+        item_dic = {
+            'ItemID': i.pk,
+            'ItemProductName': i.productID.productName,
+            'ItemCategory': i.productID.category,
+            'ItemQuantity': i.quantity,
+            'ItemRate': i.rate,
+            'ItemTotal': i.total,
+
+        }
+        item_list.append(item_dic)
+
+    data = {
+        'Items': item_list
+
+    }
+    return JsonResponse({'data': data}, safe=False)
+
+
+
 @csrf_exempt
 def delete_sales(request):
     if request.method == 'POST':
@@ -2579,6 +2603,30 @@ def delete_sales(request):
             product = Product.objects.get(pk=pro.productID_id)
             product.stock = product.stock + pro.quantity
             product.save()
+
+        return JsonResponse({'message': 'success'}, safe=False)
+
+
+@csrf_exempt
+def delete_return(request):
+    if request.method == 'POST':
+        id = request.POST.get("ID")
+        sale = SalesReturn.objects.get(pk=int(id))
+        sale.isDeleted = True
+        sale.save()
+        sales_products = SalesReturnProduct.objects.filter(salesReturnID_id=int(id))
+        for pro in sales_products:
+            product = Product.objects.get(pk=pro.productID.productID.pk)
+            ori_stock = product.stock
+            product.stock = (ori_stock - pro.quantity)
+            product.save()
+            try:
+                bat = ProductBatch.objects.get(pk=pro.productID.batchID_id)
+                ori_batch = bat.quantity
+                bat.quantity = (ori_batch - pro.quantity)
+                bat.save()
+            except:
+                pass
 
         return JsonResponse({'message': 'success'}, safe=False)
 
@@ -5010,6 +5058,11 @@ def daily_report(request):
     total_expense = 0.0
     for e in expense:
         total_expense += e.amount
+
+    return_s = SalesReturn.objects.filter(datetime__icontains=datetime.today().date())
+    total_return = 0.0
+    for e in return_s:
+        total_return += e.totalAmount
     user_data =[]
     for user in sales_user:
         cash_sale_user = 0.0
@@ -5084,7 +5137,9 @@ def daily_report(request):
         'cheque_sale_total':cheque_sale_total,
         'sale_total':cash_sale_total+card_sale_total+credit_sale_total+cheque_sale_total,
         'total_expense':total_expense,
-        'cash_in_hand':cash_sale_total-total_expense
+        'total_return': total_return,
+        'total_total_expense': total_return + total_expense,
+        'cash_in_hand': cash_sale_total - (total_expense + total_return)
     }
 
 
