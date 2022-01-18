@@ -128,6 +128,7 @@ urlpatterns = [
     # Sales
     url(r'^SalesListByProductJson/$', SalesListByProductJson.as_view(), name='SalesListByProductJson'),
     url(r'^SalesListJson/$', SalesListJson.as_view(), name='SalesListJson'),
+    url(r'^ReturnListJson/$', ReturnListJson.as_view(), name='ReturnListJson'),
     url(r'^SalesListByCustomerJson/$', SalesListByCustomerJson.as_view(), name='SalesListByCustomerJson'),
     url(r'^api/AddNewSalesDetail/$', add_sales, name='add_sales'),
     url(r'^api/add_return_sales/$', add_return_sales, name='add_return_sales'),

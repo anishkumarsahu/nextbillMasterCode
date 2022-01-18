@@ -725,43 +725,39 @@
                 buttons: [{
                     extend: 'excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
                     }
                 }, {
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
                     }
                 }
                     , {
                         extend: 'colvis',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11]
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
                         }
                     }
                 ],
                 "columnDefs": [
-                    {"name": "customerName", "targets": 0, "orderable": true},
-                    {"name": "customerGst", "targets": 1, "orderable": true},
-                    {"name": "invoiceDate", "targets": 2, "orderable": true},
-                    {"name": "id", "targets": 3, "orderable": true},
-                    {"name": "invoiceNumber", "targets": 4, "orderable": true},
-                    {"name": "grandTotal", "targets": 5, "orderable": true},
-                    {"name": "dueOrReturnAmount", "targets": 6, "orderable": true},
-                    {"name": "paymentType", "targets":7, "orderable": true},
-                    {"name": "companyID", "targets": 8, "orderable": true},
-                    {"name": "salesType", "targets": 9, "orderable": true},
-                    {"name": "status", "targets": 10, "orderable": true},
-                    {"name": "datetime", "targets": 11, "orderable": true},
-                    {"name": "action", "targets": 12, "orderable": false},
+                    {"name": "salesID.customerName", "targets": 0, "orderable": true},
+                    {"name": "salesID.customerGst", "targets": 1, "orderable": true},
+                    {"name": "salesID.invoiceDate", "targets": 2, "orderable": true},
+                    {"name": "salesID.id", "targets": 3, "orderable": true},
+                    {"name": "salesID.invoiceNumber", "targets": 4, "orderable": true},
+                    {"name": "totalAmount", "targets": 5, "orderable": true},
+                    {"name": "salesID.companyID", "targets": 6, "orderable": true},
+                    {"name": "datetime", "targets": 7, "orderable": true},
+                    {"name": "action", "targets": 8, "orderable": false},
 
                 ],
-                aaSorting: [[11, 'desc']],
+                aaSorting: [[7, 'desc']],
                 "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
                 "pageLength": 8,
                 "processing": true,
                 "serverSide": true,
-                "ajax": '{% url 'homeApp:SalesListJson' %}?startDate=' + startDate + '&endDate=' + endDate
+                "ajax": '{% url 'homeApp:ReturnListJson' %}?startDate=' + startDate + '&endDate=' + endDate
             });
         }
         function getPurchaseByProduct() {

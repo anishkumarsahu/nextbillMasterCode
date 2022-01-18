@@ -2175,6 +2175,96 @@ class SalesListJson(BaseDatatableView):
         return json_data
 
 
+class ReturnListJson(BaseDatatableView):
+    order_columns = ['salesID.customerName', 'salesID.customerGst', 'salesID.invoiceDate', 'salesID.id',
+                     'salesID.invoiceNumber', 'totalAmount',  'salesID.companyID','datetime', ]
+
+    def get_initial_queryset(self):
+        sDate = self.request.GET.get('startDate')
+        eDate = self.request.GET.get('endDate')
+        startDate = datetime.strptime(sDate, '%d/%m/%Y')
+        endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+        if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+            return SalesReturn.objects.filter(isDeleted__exact=False, datetime__gte=startDate.date(),
+                                        datetime__lte=endDate.date() + timedelta(days=1))
+        else:
+            user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+            return SalesReturn.objects.filter(isDeleted__exact=False, salesID__companyID_id=user.company_ID_id,
+                                        datetime__gte=startDate.date(),
+                                        datetime__lte=endDate.date() + timedelta(days=1))
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(salesID__customerName__icontains=search) | Q(salesID__customerGst__icontains=search) | Q(salesID__id__icontains=search)
+                | Q(salesID__invoiceDate__icontains=search) | Q(salesID__invoiceNumber__icontains=search)
+                | Q(totalAmount__icontains=search) | Q(salesID__companyID__name__icontains=search)
+            ).order_by('-id')
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            if item.salesID.customerGst is None:
+                customerGst = 'N/A'
+            else:
+                customerGst = item.salesID.customerGst
+            if item.salesID.invoiceNumber is None:
+                invoiceNumber = 'N/A'
+            else:
+                invoiceNumber = item.salesID.invoiceNumber
+            # if item.status == True:
+            #     status = '''<a class="ui green label">Paid</a>'''
+            # else:
+            #     status = '''<a class="ui red label">Due</a>'''
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+
+                action = '''<button style="font-size:10px;" onclick = "TakePayment('{}')" class="ui circular  icon button blue">
+                               <i class="hand holding usd icon"></i>
+                             </button><button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
+                               <i class="receipt icon"></i>
+                             </button>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            else:
+                action = '''<button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
+                                               <i class="receipt icon"></i>
+                                             </button>'''.format(item.pk, item.pk, item.pk),
+
+            json_data.append([
+                escape(item.salesID.customerName),  # escape HTML for security reasons
+                customerGst,
+                escape(item.salesID.invoiceDate),
+                str(item.pk).zfill(5),
+                invoiceNumber,
+                escape(item.totalAmount),
+                escape(item.salesID.companyID.name),
+                escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
+                action
+
+                #                      < button
+                #     style = "font-size:10px;"
+                #     onclick = "GetSaleDetail('{}')"
+                #
+                #     class ="ui circular facebook icon button green" >
+                #
+                #     < i
+                #
+                #     class ="pen icon" > < / i >
+                # < / button >
+            ])
+        return json_data
+
+
+
 class SalesListByCustomerJson(BaseDatatableView):
     order_columns = ['id', 'invoiceDate', 'id', 'invoiceNumber',
                      'grandTotal', 'paidAgainstBill', 'paymentType', 'companyID', 'salesType', 'datetime', ]
